@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<style>
+    <style>
 		.piece {
 			border: 3px solid black;
 			width: 54px;
@@ -38,59 +38,67 @@
 		}
 
 		.selected {
-			border: 1px solid blue;
+			border-color:blue;
+			opacity: 0.5;
 		}
-	</style>
-	<script>
+
+    </style>
+    <script>
 		function pieceClicked() {
 			var piece = event.target;
-			piece.classList.add("selected");
+			if(piece.classList.contains("selected")){
+				// remove selected class
+				piece.classList.remove("selected");
+			} else{
+				piece.classList.add("selected");
+			}
 			//alert("you clicked something!")
 		}
-	</script>
+
+    </script>
 </head>
 <body>
 <div>
-	<div class="somePieces">
-		<div class="piece white size4" onclick="pieceClicked()"></div>
-		<div class="piece white size3" onclick="pieceClicked()"></div>
-		<div class="piece white size2" onclick="pieceClicked()"></div>
-		<div class="piece white size1" onclick="pieceClicked()"></div>
-	</div>
+    <div class="somePieces">
+        <div class="piece white size4" onclick="pieceClicked()"></div>
+        <div class="piece white size3" onclick="pieceClicked()"></div>
+        <div class="piece white size2" onclick="pieceClicked()"></div>
+        <div class="piece white size1" onclick="pieceClicked()"></div>
+    </div>
 </div>
 <table>
-	<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-	</tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>
 <div>
-	<div class="somePieces">
-		<div class="piece black size4"></div>
-		<div class="piece black size3"></div>
-		<div class="piece black size2"></div>
-		<div class="piece black size1"></div>
-	</div>
+    <div class="somePieces">
+        <div class="piece black size4" onclick="pieceClicked()"></div>
+        <div class="piece black size3" onclick="pieceClicked()"></div>
+        <div class="piece black size2" onclick="pieceClicked()"></div>
+        <div class="piece black size1" onclick="pieceClicked()"></div>
+    </div>
 </div>
 </body>
 </html>
