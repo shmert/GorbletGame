@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+	<style>
+		.piece {
+			border: 3px solid black;
+			width: 54px;
+			height: 54px;
+		}
+
+		.size3 {
+			width: 44px;
+			height: 44px;
+		}
+
+		.size2 {
+			width: 34px;
+			height: 34px;
+		}
+
+		.size1 {
+			width: 24px;
+			height: 24px;
+		}
+
+		.black {
+			background-color: rgb(49, 49, 49);
+		}
+
+		.white {
+			background-color: #f3f6ff;
+		}
+
+		td {
+			width: 64px;
+			height: 64px;
+			border: 1px solid black;
+		}
+
+		.selected {
+			border: 1px solid blue;
+		}
+	</style>
+	<script>
+		function pieceClicked() {
+			var piece = event.target;
+			piece.classList.add("selected");
+			//alert("you clicked something!")
+		}
+	</script>
+</head>
+<body>
+<div>
+	<div class="somePieces">
+		<div class="piece white size4" onclick="pieceClicked()"></div>
+		<div class="piece white size3" onclick="pieceClicked()"></div>
+		<div class="piece white size2" onclick="pieceClicked()"></div>
+		<div class="piece white size1" onclick="pieceClicked()"></div>
+	</div>
+</div>
+<table>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+<div>
+	<div class="somePieces">
+		<div class="piece black size4"></div>
+		<div class="piece black size3"></div>
+		<div class="piece black size2"></div>
+		<div class="piece black size1"></div>
+	</div>
+</div>
+</body>
+</html>
