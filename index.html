@@ -23,6 +23,7 @@
 			height: 24px;
 		}
 
+
 		.black {
 			background-color: rgb(49, 49, 49);
 		}
@@ -44,6 +45,8 @@
 
     </style>
     <script>
+		var SELECTED_PIECE=null;
+
 		function pieceClicked() {
 			var piece = event.target;
 			if(piece.classList.contains("selected")){
@@ -53,6 +56,13 @@
 				piece.classList.add("selected");
 			}
 			//alert("you clicked something!")
+		}
+		function squareClicked() {
+			g = document.getElementsByClassName('selected');
+			// console.log(event.target);
+			var square = event.currentTarget;
+			square.appendChild(g[0]);
+			g[0].classList.remove("selected");
 		}
 
     </script>
@@ -68,28 +78,28 @@
 </div>
 <table>
     <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
     </tr>
     <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
+        <td onclick="squareClicked()"></td>
     </tr>
 </table>
 <div>
