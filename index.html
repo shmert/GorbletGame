@@ -1,114 +1,227 @@
 <!doctype html>
 <html>
 <head>
-    <style>
-		.piece {
-			border: 3px solid black;
-			width: 54px;
-			height: 54px;
-		}
+	<style>
+        .piece {
+            display: block;
+            position: absolute;
+            border: 3px solid black;
+            border-radius: 50%;
+            text-align: center;
+        }
 
-		.size3 {
-			width: 44px;
-			height: 44px;
-		}
+        .size3 {
+            width: 44px;
+            height: 44px;
+        }
 
-		.size2 {
-			width: 34px;
-			height: 34px;
-		}
+        .size2 {
+            width: 34px;
+            height: 34px;
+        }
 
-		.size1 {
-			width: 24px;
-			height: 24px;
-		}
+        .size1 {
+            width: 24px;
+            height: 24px;
+        }
+
+        .size0 {
+            width: 14px;
+            height: 14px;
+        }
 
 
-		.black {
-			background-color: rgb(49, 49, 49);
-		}
+        .team0 {
+            background-color: rgb(49, 49, 49);
+        }
 
-		.white {
-			background-color: #f3f6ff;
-		}
+        .team1 {
+            background-color: #f3f6ff;
+        }
 
-		td {
-			width: 64px;
-			height: 64px;
-			border: 1px solid black;
-		}
+        table {
+            border-collapse: collapse;
+        }
 
-		.selected {
-			border-color:blue;
-			opacity: 0.5;
-		}
+        td, li {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
-    </style>
-    <script>
-		var SELECTED_PIECE=null;
+            position: relative;
+            width: 64px;
+            height: 64px;
+            border: 1px solid black;
+        }
 
-		function pieceClicked() {
-			var piece = event.target;
-			if(piece.classList.contains("selected")){
-				// remove selected class
-				piece.classList.remove("selected");
-			} else{
-				piece.classList.add("selected");
-			}
-			//alert("you clicked something!")
-		}
-		function squareClicked() {
-			g = document.getElementsByClassName('selected');
-			// console.log(event.target);
-			var square = event.currentTarget;
-			square.appendChild(g[0]);
-			g[0].classList.remove("selected");
-		}
+        .dragging {
+            border-color: blue;
+            opacity: 0.5;
+        }
 
-    </script>
+
+	</style>
 </head>
 <body>
-<div>
-    <div class="somePieces">
-        <div class="piece white size4" onclick="pieceClicked()"></div>
-        <div class="piece white size3" onclick="pieceClicked()"></div>
-        <div class="piece white size2" onclick="pieceClicked()"></div>
-        <div class="piece white size1" onclick="pieceClicked()"></div>
-    </div>
-</div>
-<table>
-    <tr>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-    </tr>
-    <tr>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-    </tr>
-    <tr>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-    </tr>
-    <tr>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-        <td onclick="squareClicked()"></td>
-    </tr>
-</table>
-<div>
-    <div class="somePieces">
-        <div class="piece black size4" onclick="pieceClicked()"></div>
-        <div class="piece black size3" onclick="pieceClicked()"></div>
-        <div class="piece black size2" onclick="pieceClicked()"></div>
-        <div class="piece black size1" onclick="pieceClicked()"></div>
-    </div>
-</div>
 </body>
+<script>
+	'use strict';
+	(function gorblet() {
+		let board = Uint8Array.from(atob('AAAAAAAAAAAAAAAAAAAAAA8PD////w=='), c => c.charCodeAt(0));
+		// let board = Uint8Array.from(atob('ACoAAAgIAAAAzAAAAAAAAA8PD////w=='), c => c.charCodeAt(0));
+
+		let activeDrag = null;
+
+		let myTeam = 0; // I'm playing black
+
+		let whoseTurn = 0; // it's black's turn
+
+		class Piece {
+			constructor(size, isWhite) {
+				this.size = size;
+				this.white = isWhite;
+			}
+		}
+
+		function piecesAt(index) {
+			const square = board[index];
+			const result = [];
+			for (let size = 0; size <= 3; size++) {
+				if ((square & (1 << size)) !== 0) {
+					let isWhiteIndex = size + 4;
+					result.push(new Piece(size, (square & 1 << isWhiteIndex) !== 0));
+				}
+			}
+			return result;
+		}
+
+		let id = 0;
+
+		function createHome() {
+			const ul = document.createElement('ul');
+			for (let i = 0; i < 3; i++) {
+				let li = document.createElement('li');
+				li.classList.add('external')
+				let newId = id++;
+				li.id = 's' + newId;
+				li.append(...piecesAt(newId).map((piece) => {
+					let span = document.createElement('span');
+					span.classList.add('piece', 'size' + piece.size, piece.white ? 'team1' : 'team0');
+					span.size = piece.size;
+					span.draggable = true;
+					span.addEventListener('dragstart', (event) => {
+						let piece = event.currentTarget;
+						let err = null;
+						if (whoseTurn === -1) {
+							err = 'The game is over';
+						} else if (!piece.classList.contains('team' + myTeam)) {
+							err = 'You cannot move the other player\s piece';
+						} else if (whoseTurn !== myTeam) {
+							err = 'It\'s not your turn yet...';
+						} else if (activeDrag && piece !== activeDrag) {
+							err = 'You must finish the move you have already started.';
+						}
+						if (err) {
+							alert(err);
+							return event.preventDefault();
+						}
+						console.log('Beginning move', piece);
+						activeDrag = piece;
+						activeDrag.classList.add('dragging');
+					})
+					return span;
+				}))
+				ul.append(li)
+			}
+			return ul;
+		}
+
+		const table = document.createElement('table');
+
+		function canCaptureFromExternal(destination) {
+			return false; // FIX! if destination is part of an opponent's three-in-a-row it is allowed
+		}
+
+		function winCondition(lastSquare, direction, white, count) {
+			if (count === 4) {
+				return true;
+			}
+			let nextSquare = lastSquare + direction;
+			let nextPiece = piecesAt(nextSquare).pop();
+			if (nextPiece && nextPiece.white === white) {
+				return winCondition(nextSquare, direction, white, count + 1);
+			} else {
+				return false;
+			}
+
+		}
+
+		for (let r = 0; r < 4; r++) {
+			let tr = document.createElement('tr');
+			for (let c = 0; c < 4; c++) {
+				let td = document.createElement('td');
+				let newIndex = id++;
+				td.id = '' + newIndex;
+				td.addEventListener('dragover', (ev) => {
+					ev.preventDefault();
+				})
+				td.addEventListener('drop', (ev) => {
+					ev.preventDefault();
+					let destination = ev.currentTarget;
+					let err = null;
+					if (!activeDrag) {
+						err = 'No active move';
+					} else if (activeDrag.parentElement === destination) {
+						err = 'You cannot move a piece to its own square';
+					} else {
+						let existingPieces = piecesAt(parseInt(destination.id));
+						if (existingPieces.length && activeDrag.parentElement.classList.contains('external') && !canCaptureFromExternal(destination)) {
+							err = 'You may only capture with pieces already on the board (unless capturing to prevent an imminent loss)';
+						} else if (existingPieces.length && existingPieces[existingPieces.length - 1].size >= activeDrag.size) {
+							err = 'You can only capture smaller pieces';
+						}
+					}
+					if (err) {
+						return alert(err);
+					}
+					console.log('Dropped', activeDrag, 'to ' + td.id);
+					// remove from previous square
+					board[parseInt(activeDrag.parentElement.id)] ^= (1 << activeDrag.size);
+					board[parseInt(activeDrag.parentElement.id)] &= ~(1 << (activeDrag.size + 4));
+					destination.append(activeDrag);
+					board[parseInt(activeDrag.parentElement.id)] |= (1 << activeDrag.size);
+					if (activeDrag.classList.contains('team1')) { // set the color bit
+						board[parseInt(activeDrag.parentElement.id)] |= (1 << (activeDrag.size + 4));
+					}
+					activeDrag.classList.remove('dragging');
+					activeDrag = null;
+					whoseTurn = whoseTurn ? 0 : 1;
+					myTeam = myTeam ? 0 : 1; // FIX!!! take out in multiplayer mode
+					console.log(board);
+					// console.log(btoa(String.fromCharCode.apply(null, board)));
+					// check for win
+					let pairs = [
+						[0, 4], [1, 4], [2, 4], [3, 4], [0, 1], [4, 1], [8, 1], [12, 1], [0, 5], [3, 3]
+					];
+					for (let i = 0; i < pairs.length; i++) {
+						let eachPair = pairs[i];
+						let maybePiece = piecesAt(eachPair[0]).pop();
+						if (maybePiece && winCondition(eachPair[0], eachPair[1], maybePiece.white, 1)) {
+							whoseTurn = -1;
+							alert('Game over!');
+						}
+					}
+				});
+				tr.append(td);
+			}
+			table.append(tr);
+		}
+		document.body.append(table);
+		// black home
+		document.body.append(createHome());
+		// white home
+		document.body.append(createHome());
+
+	})();
+</script>
 </html>
